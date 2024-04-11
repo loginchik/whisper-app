@@ -1,0 +1,12 @@
+venv
+
+.idea
+.DS_Store
+
+*.txt
+
+build
+dist
+models
+
+*.ipynb
