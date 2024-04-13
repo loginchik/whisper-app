@@ -2,11 +2,15 @@ import sys
 import os
 import time
 import datetime
+import multiprocessing
 
 import PyQt6.QtWidgets as QtW
 from PyQt6 import QtCore
 import pandas as pd
 import whisper
+
+
+multiprocessing.freeze_support()
 
 
 class Transcriber:
@@ -350,7 +354,7 @@ class AppWindow(QtW.QMainWindow):
 
         def choose_audio_file():
             dialog = QtW.QFileDialog()
-            dialog.setNameFilters(['*.mp3 *.mp4 *m4a ·*webm *mpga *wav *mpe'])
+            dialog.setNameFilter('*.mp3 *.mp4 *m4a ·*webm *mpga *wav *mpe')
             success = dialog.exec()
             if success == 1:
                 selected_filepath = dialog.selectedFiles()[0]
@@ -499,26 +503,32 @@ class AppWindow(QtW.QMainWindow):
             result = self.transcriber.transcribe_audio(language=language_code, fp16=fp16_value,
                                                        no_speech_threshold=no_speech_value,
                                                        condition_on_previous_text=condition_prev)
+            time.sleep(1)
 
             # Формируем название итогового файла
-            filename_base = 'transcript' + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
+            filename_base = 'transcript_' + datetime.datetime.now().strftime('%Y%m%d%H%M')
+            target_folder = os.path.join(os.path.split(self.transcriber.audio_path)[0], filename_base)
+            os.makedirs(target_folder, exist_ok=True)
+
             full_filename = filename_base + '_full_text.txt'
             segments_filename = filename_base + '_segments.csv'
             segments_text_filename = filename_base + '_segments_text.txt'
-            target_folder = os.path.split(self.transcriber.audio_path)[0]
+
             full_filepath = os.path.join(target_folder, full_filename)
             segments_filepath = os.path.join(target_folder, segments_filename)
             segments_text_filepath = os.path.join(target_folder, segments_text_filename)
 
-            print(result)
-
             with open(full_filepath, 'w', encoding='utf-8', errors='replace') as f:
                 f.write(result['text'])
+            time.sleep(1)
+
             segments = pd.DataFrame(result['segments'])
             segments.to_csv(segments_filepath, index=False, encoding='utf-8', errors='replace')
+            time.sleep(1)
             with open(segments_text_filepath, 'w', encoding='utf-8', errors='replace') as f:
                 for seg in segments['text']:
                     f.write(seg + '\n')
+            time.sleep(1)
             understand_checkbox.setChecked(False)
             complete_label.setVisible(True)
         start_button.clicked.connect(start_transcribe)
