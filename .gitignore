@@ -4,9 +4,9 @@ venv
 .DS_Store
 
 *.txt
+*.spec
 
 build
-dist
 models
 
 *.ipynb
