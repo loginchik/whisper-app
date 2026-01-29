@@ -1,1 +1,5 @@
 whisper-arm-arch filter=lfs diff=lfs merge=lfs -text
+
+.gitignore eol=lf
+*.toml eol=lf
+*.lock eol=lf
