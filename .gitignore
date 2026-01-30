@@ -1,12 +1,19 @@
-venv
+# Virtual environment
+venv/
+.venv/
 
-.idea
+# Project files, build and dist
+.idea/
+*.iml
+build/
+dist/
+*.spec
+*.txt
+
+# Caches and temp files
+cache/
+__pycache__/
 .DS_Store
 
-*.txt
-*.spec
-
-build
-models
-
+# Development stuff
 *.ipynb
