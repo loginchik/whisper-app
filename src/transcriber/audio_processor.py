@@ -1,6 +1,6 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Tuple
 
 import numpy as np
 from scipy.signal import resample_poly, butter, lfilter
@@ -19,7 +19,7 @@ class AudioPreprocessor:
         path: Path,
         preset: Literal["universal", "studio", "phone_call", "dictophone", "outdoors", "music"],
         target_sr: int = 16_000,
-    ) -> np.ndarray:
+    ) -> Tuple[np.ndarray, bool]:
         """
         Runs complete pipeline to preprocess audio data before giving it to Whisper
 
@@ -28,34 +28,34 @@ class AudioPreprocessor:
         :param path: path to audio file
         :param preset: preset name
         :param target_sr:
-        :return: processed audio file
+        :return: processed audio file, whether VAD was used
         """
         normalized_audio = self.normalize(self.load_file(path, target_sr))
         if preset == "universal":
-            return normalized_audio
+            return normalized_audio, False
 
         if preset == "studio":
-            return self.apply_vad(normalized_audio, sr=target_sr, threshold=0.006, pad_ms=200)
+            return self.apply_vad(normalized_audio, sr=target_sr, threshold=0.006, pad_ms=200), True
 
         if preset == "phone_call":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 150), target_sr, threshold=0.02, pad_ms=300
-            )
+            ), True
 
         if preset == "dictophone":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 80), target_sr, threshold=0.012, pad_ms=250
-            )
+            ), True
 
         if preset == "outdoors":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 200), target_sr, threshold=0.04, pad_ms=350
-            )
+            ), True
 
         if preset == "music":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 120), target_sr, threshold=0.06, pad_ms=400
-            )
+            ), True
 
         raise ValueError("Unable to process preset %s" % preset)
 
@@ -67,7 +67,7 @@ class AudioPreprocessor:
         :param target_sr: target SR
         :return: audio data
         """
-        audio, sr = sf.read(path.resolve(), always_2d=False)
+        audio, sr = sf.read(path.resolve(), always_2d=False, dtype="float32")
 
         if audio.ndim > 1:
             self.logger.debug("Converting to mono channel from %s channels", audio.ndim)
@@ -75,9 +75,9 @@ class AudioPreprocessor:
 
         if sr != target_sr:
             audio = resample_poly(audio, up=target_sr, down=sr)
-            self.logger.debug("Resampling from %s to %", sr, target_sr)
+            self.logger.debug("Resampling from %s to %s", sr, target_sr)
 
-        return audio.astype(np.float64)
+        return audio.astype(np.float32)
 
     def normalize(self, audio: np.ndarray) -> np.ndarray:
         """
@@ -87,7 +87,7 @@ class AudioPreprocessor:
         :return: normalized data
         """
         ratio = np.max(np.abs(audio)) + self.eps
-        return audio / ratio
+        return (audio / ratio).astype(np.float32)
 
     @staticmethod
     def highpass_denoise(audio: np.ndarray, sr: int = 16_000, cutoff: int = 80) -> np.ndarray:
@@ -100,7 +100,7 @@ class AudioPreprocessor:
         :return: denoised audio data
         """
         b, a = butter(2, cutoff / (sr / 2), btype="highpass")
-        return lfilter(b, a, audio)
+        return lfilter(b, a, audio).astype(np.float32)
 
     def apply_vad(self, audio: np.ndarray, sr: int = 16_000, threshold: float = 0.1, pad_ms: int = 200) -> np.ndarray:
         """
@@ -134,4 +134,4 @@ class AudioPreprocessor:
 
         voiced = voiced.reshape(-1)
         self.logger.debug("Applied VAD: %s -> %s", audio.shape, voiced.shape)
-        return voiced
+        return voiced.astype(np.float32)
