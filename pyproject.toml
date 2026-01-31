@@ -15,7 +15,6 @@ dependencies = [
     "scipy>=1.17.0",
     "soundfile>=0.13.1",
     "torch>=2.10.0",
-    "webrtcvad>=2.0.10",
 ]
 
 [dependency-groups]

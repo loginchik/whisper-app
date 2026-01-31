@@ -1675,12 +1675,6 @@ wheels = [
 ]
 
 [[package]]
-name = "webrtcvad"
-version = "2.0.10"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/89/34/e2de2d97f3288512b9ea56f92e7452f8207eb5a0096500badf9dfd48f5e6/webrtcvad-2.0.10.tar.gz", hash = "sha256:f1bed2fb25b63fb7b1a55d64090c993c9c9167b28485ae0bcdd81cf6ede96aea", size = 66156, upload-time = "2017-01-07T23:05:18.732Z" }
-
-[[package]]
 name = "werkzeug"
 version = "3.1.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1707,7 +1701,6 @@ dependencies = [
     { name = "scipy" },
     { name = "soundfile" },
     { name = "torch" },
-    { name = "webrtcvad" },
 ]
 
 [package.dev-dependencies]
@@ -1729,7 +1722,6 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.17.0" },
     { name = "soundfile", specifier = ">=0.13.1" },
     { name = "torch", specifier = ">=2.10.0" },
-    { name = "webrtcvad", specifier = ">=2.0.10" },
 ]
 
 [package.metadata.requires-dev]

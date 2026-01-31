@@ -1,8 +1,8 @@
 from logging import getLogger
 from pathlib import Path
+from typing import Literal
 
 import numpy as np
-import webrtcvad
 from scipy.signal import resample_poly, butter, lfilter
 import soundfile as sf
 
@@ -14,20 +14,50 @@ class AudioPreprocessor:
     def __init__(self) -> None:
         self.logger = getLogger(self.__class__.__name__)
 
-    def run(self, path: Path, target_sr: int = 16_000, vad_aggressiveness: int = 2) -> np.ndarray:
+    def run(
+        self,
+        path: Path,
+        preset: Literal["universal", "studio", "phone_call", "dictophone", "outdoors", "music"],
+        target_sr: int = 16_000,
+    ) -> np.ndarray:
         """
         Runs complete pipeline to preprocess audio data before giving it to Whisper
 
+        Changes processing pipeline and stages parameters depending on user defined preset
+
         :param path: path to audio file
+        :param preset: preset name
         :param target_sr:
-        :param vad_aggressiveness:
         :return: processed audio file
         """
-        return self.apply_vad(
-            self.highpass_denoise(self.normalize(self.load_file(path, target_sr=target_sr)), sr=target_sr),
-            sr=target_sr,
-            aggressiveness=vad_aggressiveness,
-        )
+        normalized_audio = self.normalize(self.load_file(path, target_sr))
+        if preset == "universal":
+            return normalized_audio
+
+        if preset == "studio":
+            return self.apply_vad(normalized_audio, sr=target_sr, threshold=0.006, pad_ms=200)
+
+        if preset == "phone_call":
+            return self.apply_vad(
+                self.highpass_denoise(normalized_audio, target_sr, 150), target_sr, threshold=0.02, pad_ms=300
+            )
+
+        if preset == "dictophone":
+            return self.apply_vad(
+                self.highpass_denoise(normalized_audio, target_sr, 80), target_sr, threshold=0.012, pad_ms=250
+            )
+
+        if preset == "outdoors":
+            return self.apply_vad(
+                self.highpass_denoise(normalized_audio, target_sr, 200), target_sr, threshold=0.04, pad_ms=350
+            )
+
+        if preset == "music":
+            return self.apply_vad(
+                self.highpass_denoise(normalized_audio, target_sr, 120), target_sr, threshold=0.06, pad_ms=400
+            )
+
+        raise ValueError("Unable to process preset %s" % preset)
 
     def load_file(self, path: Path, target_sr: int = 16_000) -> np.ndarray:
         """
@@ -72,32 +102,36 @@ class AudioPreprocessor:
         b, a = butter(2, cutoff / (sr / 2), btype="highpass")
         return lfilter(b, a, audio)
 
-    def apply_vad(self, audio: np.ndarray, sr: int = 16_000, aggressiveness: int = 2) -> np.ndarray:
+    def apply_vad(self, audio: np.ndarray, sr: int = 16_000, threshold: float = 0.1, pad_ms: int = 200) -> np.ndarray:
         """
         Cuts out silence elements to speed up Whisper processing
 
         :param audio: audio data
         :param sr:
-        :param aggressiveness: VAD mode
+        :param threshold:
+        :param pad_ms:
         :return: audio with no-speech pieces removed
         """
-        vad = webrtcvad.Vad(aggressiveness)
+        frame_len = int(sr * self.frame_ms / 1_000)
+        # Get energy per frame
+        frames = audio[: len(audio) // frame_len * frame_len]
+        frames = frames.reshape(-1, frame_len)
+        energy = np.mean(frames**2, axis=1)
 
-        frame_length = int(sr * self.frame_ms / 1_000)
+        # Create mask that seems to be speeched
+        mask = energy > threshold
+        # Widen mask not to cut off beginnings and endings of words
+        pad = int(pad_ms / self.frame_ms)
+        for i in range(1, pad + 1):
+            mask[:-i] |= mask[i:]
+            mask[i:] |= mask[:-i]
 
-        audio_int16 = (audio * 32768).astype(np.int16)
-        voiced = []
-        for i in range(0, len(audio_int16) - frame_length, frame_length):
-            frame = audio_int16[i : i + frame_length].tobytes()
-            if vad.is_speech(frame, sr):
-                # Save original piece of audio file
-                voiced.append(audio[i : i + frame_length])
+        # Get voiced pieces
+        voiced = frames[mask]
 
-        # Let whisper try it anyway
         if len(voiced) == 0:
-            self.logger.warning("Did not manage to extract speeched pieces from audio")
-            return audio
+            return audio  # Let whisper process the original file
 
-        audio_vad = np.concatenate(voiced)
-        self.logger.warning("Applied VAD: %s -> %s", audio.shape, audio_vad.shape)
-        return audio_vad
+        voiced = voiced.reshape(-1)
+        self.logger.debug("Applied VAD: %s -> %s", audio.shape, voiced.shape)
+        return voiced
