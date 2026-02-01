@@ -23,6 +23,6 @@ class Settings(BaseModel):
 
     # System directories
     CACHE_DIR: Path = Path("~/.cache/whisper").expanduser()
-
+    LOGGING_DIR: Path = CACHE_DIR / 'logs'
 
 settings = Settings()
