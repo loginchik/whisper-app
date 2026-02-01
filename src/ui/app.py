@@ -1,4 +1,3 @@
-from gettext import gettext as _
 from logging import getLogger
 from typing import Tuple
 
@@ -18,9 +17,9 @@ class MainWindowHeading(QtW.QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        information = InformationLabel(_("App name"))
+        information = InformationLabel(self.tr("App name"))
         information.add_paragraph(
-            _(
+            self.tr(
                 "Note, that the application just wraps OpenAI model. Besides model downloading, <b>all processes run "
                 "locally</b>, so the performance highly depends on your machine resources"
             )
@@ -39,7 +38,7 @@ class ModelsSelectionLayout(QtW.QWidget):
         self.model_selector: ModelsSelector = ModelsSelector().fill(available_models)
 
         about_window = ModelsWindow(available_models)
-        about_button = QtW.QPushButton(_("About models"))
+        about_button = QtW.QPushButton(self.tr("About models"))
         about_button.clicked.connect(lambda _: about_window.show())
 
         row_layout = QtW.QHBoxLayout()
@@ -51,7 +50,7 @@ class ModelsSelectionLayout(QtW.QWidget):
         row.setLayout(row_layout)
 
         layout = QtW.QVBoxLayout()
-        layout.addWidget(QtW.QLabel("<b>" + _("Choose model") + "</b>"))
+        layout.addWidget(QtW.QLabel("<b>" + self.tr("Choose model") + "</b>"))
         layout.addWidget(row)
         layout.setContentsMargins(0, 10, 0, 0)
         self.setLayout(layout)
@@ -102,11 +101,11 @@ class MainWindow(QtW.QMainWindow):
         file_menu.addAction(self.file_selector_table.delete_files_action)
 
         about_menu = menu.addMenu("&Help")
-        about_action = QAction(_("About"), self)
+        about_action = QAction(self.tr("About"), self)
         about_action.triggered.connect(self.show_about_window)
         about_menu.addAction(about_action)
 
-        self.start_button = QtW.QPushButton(_("Start"))
+        self.start_button = QtW.QPushButton(self.tr("Start"))
         self.start_button.clicked.connect(self.run_task)
         self.start_button.setEnabled(False)
         self.file_selector_table.has_files_changed.connect(lambda changed: self.start_button.setEnabled(changed))
@@ -121,7 +120,7 @@ class MainWindow(QtW.QMainWindow):
         widget.setLayout(layout)
         self.setCentralWidget(widget)
         self.set_window_size()
-        self.setWindowTitle(_("App name"))
+        self.setWindowTitle(self.tr("App name"))
 
     def on_quit(self) -> None:
         """

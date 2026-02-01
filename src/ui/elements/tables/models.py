@@ -1,4 +1,3 @@
-from gettext import gettext as _
 from typing import Tuple, Self
 
 import PyQt6.QtWidgets as QtW
@@ -19,7 +18,9 @@ class ModelsTableWidget(QtW.QTableWidget):
 
         # Configure columns
         self.setColumnCount(len(self.COLUMNS))
-        self.setHorizontalHeaderLabels(self.column_labels)
+        self.setHorizontalHeaderLabels(
+            [self.tr("Parameters"), self.tr("Required VRAM"), self.tr("Relative speed"), self.tr("Disk space")]
+        )
         # Configure rows
         self.setRowCount(len(models))
         self.setVerticalHeaderLabels(list(map(lambda m: m.name, models)))
@@ -31,12 +32,3 @@ class ModelsTableWidget(QtW.QTableWidget):
 
         self.adjustSize()
         return self
-
-    @property
-    def column_labels(self) -> Tuple[str, ...]:
-        """
-        Generates human-readable column names for the table
-
-        :return: column labels
-        """
-        return tuple(map(lambda col: _(col), self.COLUMNS))

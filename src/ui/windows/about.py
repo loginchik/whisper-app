@@ -1,5 +1,3 @@
-from gettext import gettext as _
-
 import PyQt6.QtWidgets as QtW
 
 from src.settings import settings
@@ -9,18 +7,18 @@ from src.ui.elements.labels import InformationLabel
 class AboutWindow(QtW.QDialog):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setWindowTitle(_("About"))
+        self.setWindowTitle(self.tr("About"))
         self.setModal(True)
 
-        information = InformationLabel(_("App name"))
+        information = InformationLabel(self.tr("App name"))
         information.add_paragraph(
-            _(
+            self.tr(
                 "Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse "
                 "audio and is a multitasking model"
             )
         )
         information.add_paragraph(
-            _(
+            self.tr(
                 "This application employs its multilingual speech recognition and language "
                 "detection features, supporting 50+ world languages"
             )
