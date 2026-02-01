@@ -1,0 +1,30 @@
+available:
+  - name: tiny
+    required_ram: 1
+    relative_speed: 32
+    disk_space: 76
+    default: false
+
+  - name: base
+    required_ram: 1
+    relative_speed: 16
+    disk_space: 146
+    default: true
+
+  - name: small
+    required_ram: 2
+    relative_speed: 6
+    disk_space: 484
+    default: false
+
+  - name: medium
+    required_ram: 5
+    relative_speed: 2
+    disk_space: 1454
+    default: false
+
+  - name: large
+    required_ram: 10
+    relative_speed: 1
+    disk_space: 2949
+    default: false
