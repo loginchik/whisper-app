@@ -8,7 +8,7 @@ from src.ui.elements.tables import ModelsTableWidget
 from src.ui.elements.labels import InformationLabel
 
 
-class ModelsWindow(QtW.QWidget):
+class ModelsWindow(QtW.QDialog):
     def __init__(self, models: Tuple[WhisperModel, ...], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -26,6 +26,7 @@ class ModelsWindow(QtW.QWidget):
         self.setMinimumSize(400, 400)
         self.setMaximumSize(650, 650)
         self.adjustSize()
+        self.setModal(True)
 
     @staticmethod
     def get_text_element() -> QtW.QWidget:

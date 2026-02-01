@@ -7,7 +7,7 @@ from src.transcriber.schemas import WhisperModel
 
 
 class ModelsTableWidget(QtW.QTableWidget):
-    COLUMNS: Tuple[str, ...] = ("parameters", "required_ram", "relative_speed", "disk_space", "is_loaded")
+    COLUMNS: Tuple[str, ...] = ("parameters", "required_ram", "relative_speed", "disk_space")
 
     def fill(self, models: Tuple[WhisperModel, ...]) -> Self:
         """
