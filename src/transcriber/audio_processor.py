@@ -1,10 +1,12 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Literal, Tuple
+from typing import Tuple
 
 import numpy as np
 from scipy.signal import resample_poly, butter, lfilter
 import soundfile as sf
+
+from src.transcriber.schemas import ModelSettings
 
 
 class AudioPreprocessor:
@@ -14,12 +16,19 @@ class AudioPreprocessor:
     def __init__(self) -> None:
         self.logger = getLogger(self.__class__.__name__)
 
-    def run(
-        self,
-        path: Path,
-        preset: Literal["universal", "studio", "phone_call", "dictophone", "outdoors", "music"],
-        target_sr: int = 16_000,
-    ) -> Tuple[np.ndarray, bool]:
+    def __call__(self, path: Path, preset: ModelSettings, target_sr: int = 16_000) -> Tuple[Path, np.ndarray, ModelSettings]:
+        """
+        Wraps running method to return all data required for process manager
+
+        :param path: path to audio file
+        :param preset: preset
+        :param target_sr:
+        :return: path to audio file, processed audio, preset
+        """
+        audio = self.run(path, preset.name, target_sr)
+        return path, audio, preset
+
+    def run(self, path: Path, preset: str, target_sr: int = 16_000) -> np.ndarray:
         """
         Runs complete pipeline to preprocess audio data before giving it to Whisper
 
@@ -32,30 +41,30 @@ class AudioPreprocessor:
         """
         normalized_audio = self.normalize(self.load_file(path, target_sr))
         if preset == "universal":
-            return normalized_audio, False
+            return normalized_audio
 
         if preset == "studio":
-            return self.apply_vad(normalized_audio, sr=target_sr, threshold=0.006, pad_ms=200), True
+            return self.apply_vad(normalized_audio, sr=target_sr, threshold=0.006, pad_ms=200)
 
         if preset == "phone_call":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 150), target_sr, threshold=0.02, pad_ms=300
-            ), True
+            )
 
         if preset == "dictophone":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 80), target_sr, threshold=0.012, pad_ms=250
-            ), True
+            )
 
         if preset == "outdoors":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 200), target_sr, threshold=0.04, pad_ms=350
-            ), True
+            )
 
         if preset == "music":
             return self.apply_vad(
                 self.highpass_denoise(normalized_audio, target_sr, 120), target_sr, threshold=0.06, pad_ms=400
-            ), True
+            )
 
         raise ValueError("Unable to process preset %s" % preset)
 
