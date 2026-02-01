@@ -12,6 +12,8 @@ class Settings(BaseModel):
     or address system directories
     """
 
+    version: str = "0.0.1"
+
     # In-app directories
     BASE_DIR: Path = Path(__file__).parent.resolve()
     STATIC_DIR: Path = BASE_DIR / "static"
