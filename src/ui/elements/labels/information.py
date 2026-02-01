@@ -24,5 +24,6 @@ class InformationLabel(QtW.QWidget):
         information.setWordWrap(True)
         information.setTextFormat(Qt.TextFormat.RichText)
         information.setText(text)
+        information.setOpenExternalLinks(True)
         self.layout_.addWidget(information)
         self.setLayout(self.layout_)
