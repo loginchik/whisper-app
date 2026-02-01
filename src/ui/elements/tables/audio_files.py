@@ -281,6 +281,12 @@ class AudioFilesTable(QtW.QWidget):
             self.delete_files_action.setEnabled(status)
             self.logger.debug("Switched remove button enabled status: %s", status)
 
+    def clear_files(self) -> None:
+        """
+        Resets internal files collection
+        """
+        self.files = defaultdict(FileData)
+
     @staticmethod
     def load_model_settings_presets() -> List[ModelSettings]:
         """

@@ -164,6 +164,7 @@ class MainWindow(QtW.QMainWindow):
         Unblock previously blocked elements
         """
         self.model_selection_block.unfreeze()
+        self.file_selector_table.clear_files()
         self.file_selector_table.setEnabled(True)
 
     def set_window_size(self) -> None:
