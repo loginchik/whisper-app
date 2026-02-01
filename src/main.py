@@ -11,7 +11,7 @@ from src.settings import settings
 
 
 formatter = logging.Formatter(
-    datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s - %(name)s - %(module)s:%(funcName)s [%(levelname)s]: %(message)s"
+    datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s %(name)s %(module)s:%(funcName)s [%(levelname)s]: %(message)s"
 )
 if settings.debug:
     handler = logging.StreamHandler()
@@ -38,6 +38,7 @@ def main() -> None:
     window = MainWindow()
     app.aboutToQuit.connect(window.on_quit)
 
+    root.info("Starting app")
     window.show()
     app.exec()
 
