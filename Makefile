@@ -8,4 +8,9 @@ compile_translations:
 	@lrelease src/locales/ru/app_ru.ts
 	@lrelease src/locales/en/app_en.ts
 
-
+# Creates/updates virtual environment and sets up locales
+setup_dev:
+	uv sync --all-groups;
+	$(MAKE) update_translations
+	$(MAKE) compile_translations
+	cp "src/locales/en/app_en.qm" "src/locales/app.qm"
