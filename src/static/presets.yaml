@@ -1,0 +1,50 @@
+presets:
+  - name: "universal"
+    beam_size: 5
+    temperature:
+      - 0.0
+
+  - name: "studio"
+    beam_size: 5
+    temperature:
+      - 0.0
+
+  - name: "phone_call"
+    temperature:
+      - 0.0
+      - 0.2
+      - 0.4
+    best_of: 5
+    beam_size:
+    no_speech_threshold: 0.3
+    logprob_threshold: -1.5
+    condition_on_previous_text: false
+
+  - name: "dictophone"
+    beam_size: 5
+    temperature:
+      - 0.0
+    no_speech_threshold: 0.4
+
+  - name: "outdoors"
+    temperature:
+      - 0.0
+      - 0.2
+      - 0.4
+      - 0.6
+    best_of: 7
+    no_speech_threshold: 0.25
+    logprob_threshold: -2.0
+
+  - name: "music"
+    temperature:
+      - 0.0
+      - 0.2
+      - 0.4
+      - 0.6
+    best_of: 7
+    no_speech_threshold: 0.7
+    logprob_threshold: -2.0
+    compression_ratio_threshold: 2.0
+    condition_on_previous_text: false
+    word_timestamps: true
