@@ -50,8 +50,10 @@ class TaskWindow(QtW.QDialog):
 
         layout = QtW.QVBoxLayout()
         layout.addWidget(self.model_label)
+        layout.addStretch(1)
         layout.addWidget(self.prepared_files_counter)
         layout.addWidget(self.transcribed_files_list)
+        layout.addStretch(1)
         layout.addWidget(self.transcribed_files_list)
         layout.addWidget(self.task_complete_label)
 
