@@ -294,6 +294,7 @@ class AudioFilesTable(QtW.QWidget):
         Resets internal files collection
         """
         self.files = defaultdict(FileData)
+        self.logger.info("Removed all files")
 
     @staticmethod
     def load_model_settings_presets() -> List[ModelSettings]:

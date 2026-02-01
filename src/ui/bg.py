@@ -27,7 +27,7 @@ def on_task_complete(stage: Literal["prepare", "transcribe", "clear"]):
             self.decrease_pending()
 
             if self.pending == 0 and stage != "clear":
-                self.logger.info("Ready to start next stage")
+                self.logger.debug("Ready to start next stage")
                 self.run_next_stage(STAGES[STAGES.index(stage) + 1])
             return result
 
@@ -119,13 +119,13 @@ class ProcessManager(QObject):
         if self.pending > 0:
             raise RuntimeError("Cannot start next stage having pending tasks")
 
-        self.logger.debug("Stating stage %s", stage)
+        self.logger.info("Stating stage %s", stage)
         if stage == "transcribe":
             self.pending = len(self.__prepared_files)
             self.submit_transcribe_files(self.__prepared_files)
 
         elif stage == "clear":
-            self.logger.debug("Tasks complete")
+            self.logger.info("Tasks complete")
             self.signal_task_completed.emit(True)
 
     @on_task_complete("prepare")
@@ -152,7 +152,7 @@ class ProcessManager(QObject):
         self.__prepared_files.append(result)
 
         self.signal_file_prepared.emit(1)
-        self.logger.info("Prepared file: %s", result[0].name)
+        self.logger.info("Prepared file: %s - %s - %s", result[0].name, result[2], len(result[1]))
 
     @on_task_complete("transcribe")
     def on_file_transcribed(self, future: Future) -> None:
@@ -162,7 +162,9 @@ class ProcessManager(QObject):
         :param future: completed future
         """
         transcription, path, preset = future.result()
+        self.logger.info("Transcribed file: %s - %s", path.name, preset)
         export_dir_path = self.transcriber.store_transcription(
             transcription, Path("~/Downloads").expanduser(), path.stem, preset.name != "universal"
         )
         self.signal_file_transcribed.emit(export_dir_path)
+        self.logger.info("Saved transcription: %s -> %s", path.name, export_dir_path)
