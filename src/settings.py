@@ -13,6 +13,7 @@ class Settings(BaseModel):
     """
 
     version: str = "0.0.1"
+    debug: bool = True
 
     # In-app directories
     BASE_DIR: Path = Path(__file__).parent.resolve()
