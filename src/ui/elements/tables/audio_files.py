@@ -96,10 +96,11 @@ class AudioFilesTable(QtW.QWidget):
         buttons = self.get_buttons()
 
         layout = QtW.QVBoxLayout()
-        layout.addWidget(QtW.QLabel(_("Add files in order you want them to be processed")))
+        layout.addWidget(QtW.QLabel("<b>" + _("Add files") + "</b>"))
         layout.addWidget(self.table)
         layout.addWidget(buttons)
 
+        layout.setContentsMargins(0, 10, 0, 0)
         return layout
 
     def get_table(self, table: Optional[QtW.QTableWidget] = None) -> QtW.QTableWidget:
