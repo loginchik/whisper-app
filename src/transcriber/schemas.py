@@ -13,12 +13,22 @@ class WhisperModel(BaseModel):
     """
 
     name: Literal["tiny", "small", "base", "medium", "large"]
-    required_ram: int = Field(serialization_alias="Необходимо VRAM")
-    relative_speed: int = Field(serialization_alias="Относительная скорость")
-    disk_space: int = Field(serialization_alias="Пространство на диске")
+    parameters: int = Field()
+    required_ram: int = Field()
+    relative_speed: int = Field()
+    disk_space: int = Field()
     is_default: bool = Field(
         validation_alias=AliasChoices("default", "is_default"), default=False, serialization_alias="Доступна локально"
     )
+
+    @property
+    def displayed_parameters(self) -> str:
+        """
+        Adds decorations to parameters value
+
+        :return: decorated parameters value
+        """
+        return f"{self.parameters} M"
 
     @property
     def displayed_required_ram(self) -> str:
