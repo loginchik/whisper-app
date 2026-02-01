@@ -1,4 +1,6 @@
 from pathlib import Path
+import os
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -13,7 +15,7 @@ class Settings(BaseModel):
     """
 
     version: str = "0.0.1"
-    debug: bool = True
+    debug: bool = False
 
     # In-app directories
     BASE_DIR: Path = Path(__file__).parent.resolve()

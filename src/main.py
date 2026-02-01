@@ -3,6 +3,7 @@ import multiprocessing
 import sys
 
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import QTranslator
 
 from src.ui.app import MainWindow
 from src.settings import settings
@@ -18,6 +19,9 @@ getLogger("numba").setLevel("WARNING")
 
 def main() -> None:
     app = QApplication(sys.argv)
+    translator = QTranslator()
+    translator.load(str(settings.BASE_DIR / "locales" / f"app.qm"))
+    app.installTranslator(translator)
 
     window = MainWindow()
     app.aboutToQuit.connect(window.on_quit)
