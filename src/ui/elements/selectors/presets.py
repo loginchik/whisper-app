@@ -1,4 +1,3 @@
-from gettext import gettext as _
 from typing import List
 
 import PyQt6.QtWidgets as QtW
@@ -11,4 +10,4 @@ class PresetSelector(QtW.QComboBox):
         super().__init__(*args, **kwargs)
 
         for preset in presets:
-            self.addItem(_(preset.name))
+            self.addItem(self.tr(preset.name))

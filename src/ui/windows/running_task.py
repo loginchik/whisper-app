@@ -1,4 +1,3 @@
-from gettext import gettext as _
 from logging import getLogger
 from pathlib import Path
 
@@ -15,7 +14,7 @@ class TranscribedFilesList(QtW.QWidget):
         self.logger = getLogger(self.__class__.__name__)
 
         self.list = FileList()
-        self.label = ProgressBarLabel(_("Files transcription"))
+        self.label = ProgressBarLabel(self.tr("Files transcription"))
 
         layout = QtW.QVBoxLayout()
         layout.addWidget(self.label)
@@ -39,13 +38,13 @@ class TaskWindow(QtW.QDialog):
         self.logger = getLogger(self.__class__.__name__)
         self.__files_count = 0
 
-        self.setWindowTitle(_("Running task"))
+        self.setWindowTitle(self.tr("Running task"))
 
-        self.model_label = ProcessLabel(_("Model preparation"), _("Loading"))
-        self.prepared_files_counter = ProgressBarLabel(_("Files preparation"))
+        self.model_label = ProcessLabel(self.tr("Model preparation"), self.tr("Loading"))
+        self.prepared_files_counter = ProgressBarLabel(self.tr("Files preparation"))
         self.transcribed_files_list = TranscribedFilesList()
 
-        self.task_complete_label = QtW.QLabel(_("Task complete"))
+        self.task_complete_label = QtW.QLabel(self.tr("Task complete"))
         self.task_complete_label.setVisible(False)
 
         layout = QtW.QVBoxLayout()
@@ -86,7 +85,7 @@ class TaskWindow(QtW.QDialog):
 
         :param signal: user signal
         """
-        new_label = _("Ready") if signal else _("Loading")
+        new_label = self.tr("Ready") if signal else self.tr("Loading")
         self.model_label.update_label(new_label)
 
     def handle_file_prepared(self, signal: int) -> None:

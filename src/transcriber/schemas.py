@@ -1,8 +1,8 @@
-from gettext import gettext as _
 from pathlib import Path
 from typing import Literal, List, Optional
 
 from pydantic import BaseModel, Field, AliasChoices
+from PyQt6.QtCore import QCoreApplication
 
 from src.settings import settings
 
@@ -89,7 +89,7 @@ class WhisperModel(BaseModel):
 
         :return: `is_loaded` description
         """
-        return _("is loaded") if self.is_loaded else _("not loaded")
+        return QCoreApplication.tr("is loaded") if self.is_loaded else QCoreApplication.tr("not loaded")
 
 
 class ModelSettings(BaseModel):

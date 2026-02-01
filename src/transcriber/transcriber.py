@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from datetime import datetime
-from gettext import gettext as _
 from pathlib import Path
 import re
 from typing import Dict, List, Any, Tuple
 
 import numpy as np
 import polars as pl
+from PyQt6.QtCore import QCoreApplication
 import xlsxwriter
 from yaml import safe_load
 
@@ -62,12 +62,16 @@ class Transcriber(ModelManager):
         with open(export_dir / (filename_clear + " - Meta.txt"), mode="w", encoding="utf-8") as file:
             file.writelines(
                 [
-                    _("Source") + f": {filename}\n",
-                    _("Language") + f": {transcription.language}\n",
-                    _("Created") + f": {datetime.now().strftime('%d %b %Y, %H:%M')}\n",
+                    QCoreApplication.tr("Source") + f": {filename}\n",
+                    QCoreApplication.tr("Language") + f": {transcription.language}\n",
+                    QCoreApplication.tr("Created") + f": {datetime.now().strftime('%d %b %Y, %H:%M')}\n",
                 ]
                 + (
-                    [_("Segments timings can mismatch audio timings, as voice detection was used to remove silence gaps")]
+                    [
+                        QCoreApplication.tr(
+                            "Segments timings can mismatch audio timings, as voice detection was used to remove silence gaps"
+                        )
+                    ]
                     if vad
                     else []
                 )

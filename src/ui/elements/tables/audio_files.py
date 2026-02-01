@@ -1,6 +1,5 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from gettext import gettext as _
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, List, Optional, Literal, Union
@@ -8,7 +7,7 @@ from typing import Dict, List, Optional, Literal, Union
 from frozendict import frozendict
 from more_itertools.more import last
 from PyQt6 import QtWidgets as QtW
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QCoreApplication
 from PyQt6.QtGui import QKeySequence, QAction
 from yaml import safe_load
 
@@ -32,7 +31,14 @@ class FileData:
 
 
 class AudioFilesTable(QtW.QWidget):
-    COLUMNS = (_("File"), _("Language"), _("Preset"), _("Word timestamps"), _("Condition on previous text"), "FP16")
+    COLUMNS = (
+        QCoreApplication.tr("File"),
+        QCoreApplication.tr("Language"),
+        QCoreApplication.tr("Preset"),
+        QCoreApplication.tr("Word timestamps"),
+        QCoreApplication.tr("Condition on previous text"),
+        QCoreApplication.tr("FP16"),
+    )
     has_files_changed = pyqtSignal(bool)
 
     def __init__(self, languages: Dict[str, str], *args, **kwargs) -> None:
@@ -44,14 +50,14 @@ class AudioFilesTable(QtW.QWidget):
         self.model_settings_presets: List[ModelSettings] = self.load_model_settings_presets()
 
         self.table: QtW.QTableWidget = self.get_table()
-        self.add_button: QtW.QPushButton = QtW.QPushButton(_("Add"))
-        self.remove_button: QtW.QPushButton = QtW.QPushButton(_("Remove"))
+        self.add_button: QtW.QPushButton = QtW.QPushButton(self.tr("Add"))
+        self.remove_button: QtW.QPushButton = QtW.QPushButton(self.tr("Remove"))
 
-        self.open_file_action = QAction(_("Add audio"), self)
+        self.open_file_action = QAction(self.tr("Add audio"), self)
         self.open_file_action.setShortcut(QKeySequence.StandardKey.Open)
         self.open_file_action.triggered.connect(self.handle_add_button_click)
 
-        self.delete_files_action = QAction(_("Remove selected audio files"), self.table)
+        self.delete_files_action = QAction(self.tr("Remove selected audio files"), self.table)
         self.delete_files_action.setShortcuts(QKeySequence.StandardKey.Delete)
         self.delete_files_action.triggered.connect(self.handle_remove_button_click)
         self.delete_files_action.setEnabled(False)
@@ -96,7 +102,7 @@ class AudioFilesTable(QtW.QWidget):
         buttons = self.get_buttons()
 
         layout = QtW.QVBoxLayout()
-        layout.addWidget(QtW.QLabel("<b>" + _("Add files") + "</b>"))
+        layout.addWidget(QtW.QLabel("<b>" + self.tr("Add files") + "</b>"))
         layout.addWidget(self.table)
         layout.addWidget(buttons)
 
@@ -124,7 +130,9 @@ class AudioFilesTable(QtW.QWidget):
         for i, (file, file_data) in enumerate(self.ordered_files.items()):
             language_selector = LanguageSelector(languages=self.languages)
             # Set selected language as default
-            language_selector_text = self.languages[file_data.language].capitalize() if file_data.language else _("Undefined")
+            language_selector_text = (
+                self.languages[file_data.language].capitalize() if file_data.language else self.tr("Undefined")
+            )
             language_selector.setCurrentText(language_selector_text)
             # Connect input handler
             language_selector.currentTextChanged.connect(

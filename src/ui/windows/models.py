@@ -1,4 +1,3 @@
-from gettext import gettext as _
 from typing import Tuple
 
 import PyQt6.QtWidgets as QtW
@@ -21,29 +20,28 @@ class ModelsWindow(QtW.QDialog):
         layout.addWidget(self.table)
 
         self.setLayout(layout)
-        self.setWindowTitle(_("About models"))
+        self.setWindowTitle(self.tr("About models"))
 
         self.setMinimumSize(400, 400)
         self.setMaximumSize(650, 650)
         self.adjustSize()
         self.setModal(True)
 
-    @staticmethod
-    def get_text_element() -> QtW.QWidget:
+    def get_text_element(self) -> QtW.QWidget:
         """
         Creates static text elements with models short description
 
         :return: widget
         """
-        information = InformationLabel(title=_("Available models"))
+        information = InformationLabel(title=self.tr("Available models"))
 
         paragraphs = [
-            _(
+            self.tr(
                 "Below are the names of the available models and their approximate memory requirements "
                 "and inference speed relative to the large model. Besides number of parameters, "
                 "Whisper's performance highly depends on the language"
             ),
-            _("Source")
+            self.tr("Source")
             + ': <a href="https://github.com/openai/whisper/blob/main/README.md#available-models-and-languages">OpenAI</a>',
         ]
         for par in paragraphs:
