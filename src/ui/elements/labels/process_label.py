@@ -7,12 +7,12 @@ class ProcessLabel(QtW.QWidget):
 
         self.label = QtW.QLabel(default)
 
-        layout = QtW.QHBoxLayout()
-        layout.addWidget(QtW.QLabel(label))
-        layout.addStretch(1)
-        layout.addWidget(self.label)
-        layout.setContentsMargins(*([0] * 4))
-        self.setLayout(layout)
+        self.layout = QtW.QHBoxLayout()
+        self.layout.addWidget(QtW.QLabel(label))
+        self.layout.addStretch(1)
+        self.layout.addWidget(self.label)
+        self.layout.setContentsMargins(*([0] * 4))
+        self.setLayout(self.layout)
 
     def update_label(self, new: str) -> None:
         """
