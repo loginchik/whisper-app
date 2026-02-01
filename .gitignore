@@ -7,6 +7,8 @@ venv/
 *.iml
 build/
 dist/
+WhisperGUI_dmg/
+*.dmg
 *.spec
 *.txt
 *.qm

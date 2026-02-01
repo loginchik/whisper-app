@@ -128,6 +128,7 @@ class MainWindow(QtW.QMainWindow):
         """
         self.process_manager.pool.shutdown(cancel_futures=True, wait=False)
         self.logger.info("Process pool shutdown")
+        self.logger.info("App quit")
 
     def run_task(self) -> None:
         """
@@ -157,6 +158,7 @@ class MainWindow(QtW.QMainWindow):
         self.model_selection_block.freeze()
         self.file_selector_table.setEnabled(False)
         self.start_button.setEnabled(False)
+        self.logger.info("Freeze application")
 
     def unfreeze(self) -> None:
         """
@@ -165,6 +167,7 @@ class MainWindow(QtW.QMainWindow):
         self.model_selection_block.unfreeze()
         self.file_selector_table.clear_files()
         self.file_selector_table.setEnabled(True)
+        self.logger.info("Unfreeze application")
 
     def set_window_size(self) -> None:
         """
