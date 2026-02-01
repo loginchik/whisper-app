@@ -29,6 +29,7 @@ class ModelsTableWidget(QtW.QTableWidget):
             for j, column in enumerate(self.COLUMNS):
                 self.setItem(i, j, QtW.QTableWidgetItem(getattr(model, f"displayed_{column}")))
 
+        self.adjustSize()
         return self
 
     @property
