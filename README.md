@@ -63,6 +63,15 @@ Previously used models, if you had not manually deleted them from cache director
 
 For each audio file, it is recommended to pass language for Whisper to start with relative context. Presets are predefined task settings (created by ChatGPT) that can help you handle popular tasks. If you are not sure which preset to choose, use `universal`.  
 
+Besides preset, there are separate options you can set manually: 
+
+| Setting                    | Purpose                                                                                 | Performance                                                        | 
+|----------------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------| 
+| Word timestamps            | Force Whisper to export every word's timing and probability in the resulting Excel file | Decreases peformance and increases processing time                 | 
+| Propmt                     | Pass additional context to Whisper to put into context of the audio contents            | Correctly formed, prompt usually increased transcription quality   | 
+| Condition on previous text | Take previously processed audio files into consideration, when transcribing this one    | May lead to hallucinations                                         | 
+| FP16                       |                                                                                         | More energy efficient mode, which can worsen transcription quality |
+
 ### Start transcription and wait it to complete
 
 While task is running, most application features freeze. 

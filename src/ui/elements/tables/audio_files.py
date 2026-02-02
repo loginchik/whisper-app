@@ -35,6 +35,7 @@ class AudioFilesTable(QtW.QWidget):
         QCoreApplication.tr("File"),
         QCoreApplication.tr("Language"),
         QCoreApplication.tr("Preset"),
+        QCoreApplication.tr("Prompt"),
         QCoreApplication.tr("Word timestamps"),
         QCoreApplication.tr("Condition on previous text"),
         QCoreApplication.tr("FP16"),
@@ -136,7 +137,7 @@ class AudioFilesTable(QtW.QWidget):
             language_selector.setCurrentText(language_selector_text)
             # Connect input handler
             language_selector.currentTextChanged.connect(
-                lambda changed: self.handle_file_property_change("language", changed, file)
+                lambda changed, f=file: self.handle_file_property_change("language", changed, f)
             )
 
             preset_selector = PresetSelector(presets=self.model_settings_presets)
@@ -144,12 +145,19 @@ class AudioFilesTable(QtW.QWidget):
             preset_selector.setCurrentText(file_data.preset.name)
             # Connect input handler
             preset_selector.currentTextChanged.connect(
-                lambda changed: self.handle_file_property_change("preset", changed, file)
+                lambda changed, f=file: self.handle_file_property_change("preset", changed, f)
+            )
+
+            prompt_line_edit = QtW.QTextEdit()
+            prompt_line_edit.setMinimumWidth(200)
+            prompt_line_edit.textChanged.connect(
+                lambda le=prompt_line_edit, f=file: self.handle_file_property_change("initial_prompt", le.toPlainText(), f)
             )
 
             table.setCellWidget(i, 0, QtW.QLabel(str(file.name)))
             table.setCellWidget(i, 1, language_selector)
             table.setCellWidget(i, 2, preset_selector)
+            table.setCellWidget(i, 3, prompt_line_edit)
 
             for j, checkbox_field in enumerate(("word_timestamps", "condition_on_previous_text", "fp16")):
                 checkbox = QtW.QCheckBox()
@@ -159,7 +167,7 @@ class AudioFilesTable(QtW.QWidget):
                         field, changed.value > 0, file_
                     )
                 )
-                table.setCellWidget(i, j + 3, checkbox)
+                table.setCellWidget(i, j + 4, checkbox)
 
         table.setSelectionMode(QtW.QAbstractItemView.SelectionMode.MultiSelection)
         table.setSelectionBehavior(QtW.QAbstractItemView.SelectionBehavior.SelectRows)
@@ -214,7 +222,7 @@ class AudioFilesTable(QtW.QWidget):
             universal_preset = next(preset for preset in self.model_settings_presets if preset.name == "universal")
             self.files = {
                 **self.files,
-                **{file: FileData(priority=priority + i, preset=universal_preset) for i, file in enumerate(new_)},
+                **{file: FileData(priority=priority + i, preset=universal_preset.model_copy()) for i, file in enumerate(new_)},
             }
 
     def handle_remove_button_click(self) -> None:
@@ -242,7 +250,7 @@ class AudioFilesTable(QtW.QWidget):
 
     def handle_file_property_change(
         self,
-        name: Literal["language", "preset", "word_timestamps", "condition_on_previous_text", "fp16"],
+        name: Literal["language", "preset", "word_timestamps", "condition_on_previous_text", "fp16", "initial_prompt"],
         value: Union[str, bool],
         file: Path,
     ) -> None:
@@ -269,6 +277,11 @@ class AudioFilesTable(QtW.QWidget):
             setattr(self.files[file], name, value)
             setattr(self.files[file].preset, name, value)
             self.logger.debug("Updated file %s: %s <- %s", name, value, file.name)
+        elif name == "initial_prompt":
+            new_value = value if len(value.strip()) > 0 else None
+            setattr(self.files[file], name, new_value)
+            setattr(self.files[file].preset, name, new_value)
+            self.logger.debug("Updated file %s: %s <- %s", name, new_value, file.name)
         elif name == "preset":
             preset = next(preset for preset in self.model_settings_presets if preset.name == value)
             # Inherit properties from separate fields
