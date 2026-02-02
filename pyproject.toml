@@ -1,0 +1,76 @@
+[project]
+name = "whisper-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "frozendict>=2.4.7",
+    "more-itertools>=10.8.0",
+    "openai-whisper>=20250625",
+    "pandas>=3.0.0,<4.0.0",
+    "polars>=1.37.1",
+    "pydantic>=2.12.5",
+    "pyqt6>=6.10.2",
+    "pyyaml>=6.0.3",
+    "scipy>=1.17.0",
+    "soundfile>=0.13.1",
+    "torch>=2.10.0",
+    "xlsxwriter>=3.2.9",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.14",
+    "tensorboard>=2.20.0",
+    "pyinstaller>=6.18.0",
+]
+
+
+[tool.ruff]
+src = ["src"]
+exclude = [
+    ".venv",
+    "__pycache__",
+]
+
+line-length = 127
+indent-width = 4
+required-version = ">=0.14.4"
+target-version = "py313"
+respect-gitignore = true
+show-fixes = true
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
+select = [
+    "S110", "S112",
+    "B",
+    "A",
+    "COM819",
+    "DTZ003", "DTZ004",
+    "FIX",
+    "ICN",
+    "PIE",
+    "T20",
+    "RET",
+    "SLF",
+    "N",
+    "PERF",
+    "E", "W", "F"
+
+]
+ignore = []
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["SLF001", "PIE804"]
+"__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = false
