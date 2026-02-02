@@ -24,7 +24,7 @@ Included Libraries
    copies or substantial portions of the Software.
 
 --------------------------
-GPL v3 for MyProject
+GPL v3 for Whisper GUI
 --------------------------
 
 This project (excluding MIT-licensed Whisper) is licensed under the GNU General Public License v3.0.
@@ -39,4 +39,7 @@ Icons
 The icon "Speech Synthesis" used in this project
 is provided by Freepik from Flaticon.com.
 Used under free license with attribution.
-Link: https://www.flaticon.com/free-icon/speech-synthesis_13063287
+
+Links:
+- https://www.flaticon.com/free-icons/text-to-speech — Text to speech icons created by Uniconlabs
+- https://www.flaticon.com/free-icons/input — Input icons created by Fathema Khanom
