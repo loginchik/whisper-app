@@ -44,7 +44,7 @@ Internet connection is required only to download a model on its first usage, whi
 
 ### Launch application 
 
-<img src="assets/images/main%20screen.png" style="max-height: 400px" alt="Main screen" />
+<img src="assets/images/main%20screen.png" height="400" alt="Main screen" />
 
 You need to choose a model and add audio files to process
 
@@ -55,7 +55,7 @@ You need to choose a model and add audio files to process
 
 Previously used models, if you had not manually deleted them from cache directory, are almost ready to use. Models that need to be downloaded first are marked with red icon. 
 
-<img src="assets/images/model selection.png" style="max-height: 100px" />
+<img src="assets/images/model selection.png" height="100" />
 
 — here `tiny` and `base` are available locally; `small`, `medium` and `large` will be downloaded first. 
 
@@ -67,7 +67,7 @@ For each audio file, it is recommended to pass language for Whisper to start wit
 
 While task is running, most application features freeze. 
 
-<img src="assets/images/task window.png" style="max-height: 350px" />
+<img src="assets/images/task window.png" height="350" />
 
 Transcribed files are exported in `Downloads` folder and can be located via double click.
 
