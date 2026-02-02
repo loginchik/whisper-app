@@ -14,7 +14,7 @@ class Settings(BaseModel):
     or address system directories
     """
 
-    version: str = "0.0.1"
+    version: str = "2.0.0"
     debug: bool = False
 
     # In-app directories
