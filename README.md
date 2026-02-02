@@ -1,60 +1,84 @@
-# Whisper App based on Python
+# Whisper GUI
 
-Документация к библиотеке Whisper от OpenAI, на которой построены все внутренние процессы: 
-[github.com/openai/whisper](https://github.com/openai/whisper/blob/main/README.md)
+Transcribe your audio locally with [Whisper](https://github.com/openai/whisper) multimodal speech-to-text model by OpenAI
 
-## Установка 
+## Installation 
 
-Для запуска программы необходимо скачать извлекаемый файл и запустить его. На MacOS доступно 
-только для архитектуры ARM. 
+### MacOS
 
-| Архитектура ПК | Файл для установки                  |
-|----------------|-------------------------------------|
-| MacOS ARM      | [executable](dist/whisper-arm-arch) |
+Download DMG-image from [releases](https://github.com/loginchik/whisper-app/releases/latest) and launch it. You can use the application from image or copy it to `Applications` folder for a quick access. It's up to you.
 
-! После запуска исполняемого файла на MacOS необходимо дождаться, когда исполняемый файл обработается. 
-Запуск медленный. 
+When you first open dmg-image or application, you are most probable to get **untrusted developer warning**. It basically means that, as far as the project is non-commercial, I do not have neither funding, nor wish to register in Apple. To bypass the warning and use the application:
+- open system settings
+- navigate to privacy and security settings
+- allow the application to run (enter password, if prompted)
 
-## Функционал 
+To uninstall the application, move the .app file and `~/.cache/whisper` to trash. 
 
-В рамках приложения доступна загрузка поддерживаемых [whisper](https://github.com/openai/whisper/blob/main/README.md)
-моделей, выбор аудио-файла в формате, поддерживаемом тем же [whisper](https://github.com/openai/whisper/blob/main/README.md)
-и настройка некоторых параметров модели. Результат транскрибации сохраняется в три файла: файл-txt со всем текстом, 
-файл-txt с текстами сегментов и файл-csv с подробной информацией о сегментах. 
+### Building from source 
 
-###  Выбор и загрузка модели 
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
+2. Clone repository
 
-Одну модель достаточно загрузить один раз, после чего она сохраняется в дефолтном для whisper месте: `.cache/whisper`. 
+```bash
+git clone https://github.com/loginchik/whisper-app.git
+cd whisper-app
+```
 
-![Model choice](images/model_choose.png)
+3. Configure virtual environment 
 
-После нажатия на кнопку загрузки и конфигурации модели приложение зависнет до момента, пока модель не будет загружена 
-и настроена. Это может длиться до нескольких часов, если на загрузку поставлена самая большая модель. Скорость 
-первой загрузки напрямую зависит от скорости интернет-соединения. 
+```bash 
+uv sync --all-groups
+```
 
-### Выбор аудиофайла 
+4. Build app
 
-В окне для выбора файла устанавливается фильтр на поддерживаемые расширения. 
+```bash 
+make build_english 
+```
 
-![Audio choice](images/audio_choose.png)
+## Usage
 
-После нажатия кнопки "Подготовить аудио" приложение зависнет до тех пор, пока аудио не будет обработано. Процесс может 
-длиться до нескольких часов. Скорость обработки напрямую зависит от размера аудио-файла. 
+Internet connection is required only to download a model on its first usage, while all other processes run locally on your machine
 
-### Настройка модели 
 
-Описание параметров см. в [официальной документации](https://github.com/openai/whisper/blob/main/whisper/transcribe.py)
+### Launch application 
 
-![Model parameters](images/model_setup.png)
+<img src="assets/images/main%20screen.png" style="max-height: 400px" alt="Main screen" />
 
-### Запуск модели 
+You need to choose a model and add audio files to process
 
-Для запуска модели необходимо настроить модель и аудио, а также согласиться с тем, что приложение зависнет на время 
-выполнения задачи. Процесс может длиться от нескольких минут до нескольких часов. Скорость зависит от объёма аудиофайла 
-и от выбранной модели (более тяжёлые модели работают медленнее, но более точно распознают). 
+### Choose model
 
-![Start](images/process_start.png)
+`tiny`, `base` or `small` are powerful enough to handle most tasks and can be run on almost any PC having at least 4GB of RAM. For more complicated cases you can try larger models, but remember about resource limitations of your machine. You can always check `About models` or [Whisper](https://github.com/openai/whisper/tree/v20250625?tab=readme-ov-file#available-models-and-languages) to study model's requirements. 
 
-Результат обработки будет сохранён в той же папке, что и аудиофайл. В этой папке появится новая папка с названием 
-`transcription_YYYYMMDDHHMM`, внутри неё - три файла: файл-txt со всем текстом, 
-файл-txt с текстами сегментов и файл-csv с подробной информацией о сегментах. 
+
+Previously used models, if you had not manually deleted them from cache directory, are almost ready to use. Models that need to be downloaded first are marked with red icon. 
+
+<img src="assets/images/model selection.png" style="max-height: 100px" />
+
+— here `tiny` and `base` are available locally; `small`, `medium` and `large` will be downloaded first. 
+
+### Add audio files and configure task 
+
+For each audio file, it is recommended to pass language for Whisper to start with relative context. Presets are predefined task settings (created by ChatGPT) that can help you handle popular tasks. If you are not sure which preset to choose, use `universal`.  
+
+### Start transcription and wait it to complete
+
+While task is running, most application features freeze. 
+
+<img src="assets/images/task window.png" style="max-height: 350px" />
+
+Transcribed files are exported in `Downloads` folder and can be located via double click.
+
+## Contributing
+
+This is a non-commercial project for personal usage, contributions are welcome. For major changes, please open an issue first to discuss what you would like to change. 
+
+## Troubleshooting
+
+If application crashes a few times in a row, consider it a bug. If you want the bug to be fixed, open an issue and make sure to include step-by-step description of your actions and log files from `~/.cache/whisper/logging` directory.
+
+## License 
+
+[GPL v3](LICENSE)
